@@ -24,9 +24,6 @@ export default function TabOneScreen() {
 
     alert(`Bar code with type ${type} and data ${data} has been scanned!`)
   }
-  console.log('Index')
-  console.log('Index')
-  console.log('Index')
 
   return (
     <Container>

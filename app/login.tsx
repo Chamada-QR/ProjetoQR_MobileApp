@@ -20,9 +20,6 @@ const formValidationSchema = yup.object({
 
 export default function Login() {
   const { signIn } = useSession()
-  console.log('Login')
-  console.log('Login')
-  console.log('Login')
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
