@@ -1,8 +1,9 @@
 import React from 'react'
 import { useStorageState } from './useStorageState'
+import * as SecureStore from 'expo-secure-store'
 
 const AuthContext = React.createContext<{
-  signIn: () => void
+  signIn: (key, value) => void
   signOut: () => void
   session?: string | null
   isLoading: boolean
@@ -31,7 +32,8 @@ export function SessionProvider(props: React.PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
-        signIn: () => {
+        signIn: async (key, value) => {
+          await SecureStore.setItemAsync(key, value)
           // Perform sign-in logic here
           console.log('Inside sign-in')
           setSession('xxx')

@@ -28,8 +28,8 @@ export default function Login() {
           initialValues={{ ra: '', password: '' }}
           validationSchema={formValidationSchema}
           onSubmit={(val, actions) => {
-            // signIn(val.ra, val.password)
-            signIn()
+            signIn('user_ra', val.ra)
+            // signIn()
             actions.resetForm()
             router.replace('/')
           }}

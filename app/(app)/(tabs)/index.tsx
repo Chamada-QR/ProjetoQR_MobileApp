@@ -1,43 +1,53 @@
-import { Button, Modal, StyleSheet } from 'react-native'
-
-import EditScreenInfo from '@/components/EditScreenInfo'
-import { Text, View } from '@/components/Themed'
+import { StyleSheet } from 'react-native'
+import { Text } from '@/components/Themed'
 import { useState } from 'react'
 import { Barcodebox, Container, Maintext } from '@/constants/Styles/tabsStyles'
 import { Link } from 'expo-router'
-import { CameraView, useCameraPermissions } from 'expo-camera'
-import React = require('react')
-import * as Permissions from 'expo-permissions'
+import { CameraView } from 'expo-camera'
+import * as SecureStore from 'expo-secure-store'
+import React from 'react'
+import axios from 'axios'
 
 export default function TabOneScreen() {
-  const [hasPermission, setHasPermission] = useState<Boolean>(false)
-  const [scanned, setScanned] = useState(false)
-  const [text, setText] = useState('Not yet scanned')
-
   const [modalVisible, setModalVisible] = useState(true)
 
-  const requestPermission = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA)
-    if (status === 'granted') {
-      setModalVisible(false)
-    }
-  }
-  const handleBarCodeScanned = ({
-    type,
-    data
-  }: {
-    type: string
-    data: string
-  }) => {
-    setText(data)
-    setScanned(true)
+  const handleBarCodeScanned = ({ type, data }: { type: string; data: {} }) => {
+    async function confirmPresence(data: {}) {
+      try {
+        let result = await SecureStore.getItemAsync('user_ra')
+        console.log('Before axios')
 
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`)
+        // Log the result to confirm the user_ra value
+        console.log('user_ra:', result)
+        console.log('Data: ', data)
+
+        // Uncomment the correct API call and provide the correct URL and payload
+        // const response = await axios.post(`http://192.168.1.100:3758/lesson/4`, {
+        //   user_id: result
+        // })
+
+        const response = await axios.post(
+          `http://192.168.100.4:3758/lesson/5/${data.qr_code}`,
+          {
+            user_id: result
+          }
+        )
+
+        console.log('After axios')
+        console.log('Response:', response.data)
+      } catch (error) {
+        console.error('Error making request:', error)
+      }
+    }
+
+    confirmPresence(data)
+    setTimeout(() => {}, 6000)
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`)
   }
 
   return (
     <Container>
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <Modal
           animationType="slide"
           transparent={true}
@@ -53,32 +63,23 @@ export default function TabOneScreen() {
             <Button onPress={requestPermission} title="Grant Permission" />
           </View>
         </Modal>
-      </View>
+      </View> */}
 
       <Barcodebox>
         <CameraView
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          onBarcodeScanned={handleBarCodeScanned}
           barcodeScannerSettings={{
             barcodeTypes: ['qr']
           }}
           style={StyleSheet.absoluteFillObject}
         />
       </Barcodebox>
-      <Maintext>
-        <Text>{text}</Text>
-      </Maintext>
+      <Maintext></Maintext>
 
       <Text>Professor: Gustavo Colombeli</Text>
-      <Text>Dia: 15/04/2023</Text>
-      <Text>Presença: A confirmar</Text>
+      <Text>Dia: xx/xx/2024</Text>
+      <Text>Presença: Confirmar</Text>
       <Link href={'/login'}>Ir para login</Link>
-      {scanned && (
-        <Button
-          title={'Scan again?'}
-          onPress={() => setScanned(false)}
-          color="tomato"
-        />
-      )}
     </Container>
   )
 }
