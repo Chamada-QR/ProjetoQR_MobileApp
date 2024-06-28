@@ -29,7 +29,6 @@ export default function Login() {
           validationSchema={formValidationSchema}
           onSubmit={(val, actions) => {
             signIn('user_ra', val.ra)
-            // signIn()
             actions.resetForm()
             router.replace('/')
           }}

@@ -15,26 +15,25 @@ export default function TabOneScreen() {
     async function confirmPresence(data: {}) {
       try {
         let result = await SecureStore.getItemAsync('user_ra')
+        console.log('****************')
         console.log('Before axios')
-
-        // Log the result to confirm the user_ra value
         console.log('user_ra:', result)
         console.log('Data: ', data)
+        console.log('****************')
 
-        // Uncomment the correct API call and provide the correct URL and payload
-        // const response = await axios.post(`http://192.168.1.100:3758/lesson/4`, {
-        //   user_id: result
-        // })
-
-        const response = await axios.post(
-          `http://192.168.100.4:3758/lesson/5/${data.qr_code}`,
-          {
-            user_id: result
-          }
-        )
+        const response = await axios
+          .post(`http://192.168.100.4:3758/lesson/${data.id}/${data.qr_code}`, {
+            user_id: 2
+          })
+          .then(response => {
+            console.log(response)
+          })
+          .catch(error => {
+            console.error('Error:', error)
+          })
 
         console.log('After axios')
-        console.log('Response:', response.data)
+        console.log('Response:', response)
       } catch (error) {
         console.error('Error making request:', error)
       }
